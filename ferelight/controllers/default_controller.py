@@ -7,6 +7,14 @@ from ferelight.controllers import tokenizer, model
 from ferelight.models import Scoredsegment
 from ferelight.models.multimediaobject import Multimediaobject  # noqa: E501
 from ferelight.models.multimediasegment import Multimediasegment  # noqa: E501
+from ferelight.models.objectinfos_post_request import ObjectinfosPostRequest  # noqa: E501
+from ferelight.models.query_post_request import QueryPostRequest  # noqa: E501
+from ferelight.models.querybyexample import Querybyexample  # noqa: E501
+from ferelight.models.scoredsegment import Scoredsegment  # noqa: E501
+from ferelight.models.segmentbytime import Segmentbytime  # noqa: E501
+from ferelight.models.segmentbytime_database_post200_response import SegmentbytimeDatabasePost200Response  # noqa: E501
+from ferelight.models.segmentinfos_post_request import SegmentinfosPostRequest  # noqa: E501
+from ferelight import util
 
 
 def get_connection(database):
@@ -207,3 +215,98 @@ def segmentinfos_post(body):  # noqa: E501
                      results]
 
     return segment_infos
+
+def querybyexample_database_post(database, body):  # noqa: E501
+    """Get the nearest neighbors of a segment.
+
+     # noqa: E501
+
+    :param database: The name of the database to query.
+    :type database: str
+    :param querybyexample:
+    :type querybyexample: dict | bytes
+
+    :rtype: Union[List[Scoredsegment], Tuple[List[Scoredsegment], int], Tuple[List[Scoredsegment], int, Dict[str, str]]
+    """
+    with get_connection(database) as conn:
+        cur = conn.cursor()
+        cur.execute('CREATE EXTENSION IF NOT EXISTS vector')
+        register_vector(conn)
+
+        # Fetch the feature vector for the given segment ID
+        cur.execute(
+            "SELECT feature FROM features_openclip WHERE id = %s",
+            (body['segmentid'],)
+        )
+        row = cur.fetchone()
+
+        if not row:
+            return [], 404  # Segment not found
+
+        target_vector = row[0]  # Extract stored feature vector
+
+        # Fetch nearest neighbors
+        cur.execute(
+            """
+            SELECT s.segmentid, s.objectid, s.segmentnumber, 
+                   s.segmentstart, s.segmentend, s.segmentstartabs, s.segmentendabs, 
+                   f.feature <=> %s AS distance
+            FROM cineast_segment AS s
+            JOIN features_openclip AS f ON s.segmentid = f.id
+            WHERE s.segmentid != %s
+            ORDER BY f.feature <=> %s
+            LIMIT %s
+            """,
+            (target_vector, body['segmentid'], target_vector, body.get('k', 10))
+        )
+
+        results = cur.fetchall()
+
+    if not results:
+        return [], 404  # No neighbors found
+
+    # Convert results into Scoredsegment objects
+    scored_segments = [
+        Scoredsegment(
+            segmentid=row[0],
+            score=1 - row[7]
+        ) for row in results
+    ]
+
+    return scored_segments
+
+
+
+def segmentbytime_database_post(database, body):  # noqa: E501
+    """Get the segment ID for a given timestamp.
+
+     # noqa: E501
+
+    :param database: The name of the database to query.
+    :type database: str
+    :param segmentbytime:
+    :type segmentbytime: dict | bytes
+
+    :rtype: Union[SegmentbytimeDatabasePost200Response, Tuple[SegmentbytimeDatabasePost200Response, int], Tuple[SegmentbytimeDatabasePost200Response, int, Dict[str, str]]
+    """
+    with get_connection(database) as conn:
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT segmentid, segmentstartabs, segmentendabs
+            FROM cineast_segment
+            WHERE objectid = %s
+            """,
+            (body['objectid'],)
+        )
+
+        results = cur.fetchall()
+
+    if not results:
+        return {}, 404  # Object not found
+
+    for row in results:
+        if row[1] <= body['timestamp'] < row[2]:
+            return SegmentbytimeDatabasePost200Response(segmentid=row[0])
+
+    return {}, 404  # No matching segment found

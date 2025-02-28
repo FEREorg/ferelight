@@ -106,6 +106,62 @@ paths:
           description: OK
       summary: Query the FERElight engine.
       x-openapi-router-controller: ferelight.controllers.default_controller
+  /querybyexample/{database}:
+    post:
+      operationId: querybyexample_database_post
+      parameters:
+      - description: The name of the database to query.
+        explode: false
+        in: path
+        name: database
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/querybyexample'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/scoredsegment'
+                type: array
+          description: OK
+      summary: Get the nearest neighbors of a segment.
+      x-openapi-router-controller: ferelight.controllers.default_controller
+  /segmentbytime/{database}:
+    post:
+      operationId: segmentbytime_database_post
+      parameters:
+      - description: The name of the database to query.
+        explode: false
+        in: path
+        name: database
+        required: true
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/segmentbytime'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/_segmentbytime__database__post_200_response'
+          description: OK
+      summary: Get the segment ID for a given timestamp.
+      x-openapi-router-controller: ferelight.controllers.default_controller
   /segmentinfo/{database}/{segmentid}:
     get:
       operationId: segmentinfo_database_segmentid_get
@@ -237,6 +293,36 @@ components:
           type: number
       title: scoredsegment
       type: object
+    querybyexample:
+      properties:
+        segmentid:
+          description: The unique identifier of the segment.
+          title: segmentid
+          type: string
+        k:
+          description: Number of neighbors to retrieve.
+          title: k
+          type: integer
+      required:
+      - k
+      - segmentid
+      title: querybyexample
+      type: object
+    segmentbytime:
+      properties:
+        objectid:
+          description: The unique identifier of the object.
+          title: objectid
+          type: string
+        timestamp:
+          description: Timestamp to locate in seconds.
+          title: timestamp
+          type: number
+      required:
+      - objectid
+      - timestamp
+      title: segmentbytime
+      type: object
     _objectinfos_post_request:
       properties:
         database:
@@ -284,4 +370,14 @@ components:
           title: limit
           type: integer
       title: _query_post_request
+      type: object
+    _segmentbytime__database__post_200_response:
+      example:
+        segmentid: segmentid
+      properties:
+        segmentid:
+          description: Matching segment ID
+          title: segmentid
+          type: string
+      title: _segmentbytime__database__post_200_response
       type: object
