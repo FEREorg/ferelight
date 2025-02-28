@@ -4,55 +4,79 @@ info:
   description: API for the lightweight feature extraction and retrieval engine (FERElight).
   version: 1.0.0
 components:
-    schemas:
-        multimediaobject:
-          type: object
-          properties:
-            objectid:
-              type: string
-              description: The unique identifier of the object.
-            mediatype:
-              type: integer
-              description: The mediatype enum value of the object.
-            name:
-              type: string
-              description: The name of the object.
-            path:
-              type: string
-              description: The path of the object.
-        multimediasegment:
-          type: object
-          properties:
-            segmentid:
-              type: string
-              description: The unique identifier of the segment.
-            objectid:
-              type: string
-              description: The unique identifier of the object.
-            segmentnumber:
-              type: integer
-              description: The segment number.
-            segmentstart:
-              type: integer
-              description: The start frame of the segment.
-            segmentend:
-              type: integer
-              description: The end frame of the segment.
-            segmentstartabs:
-              type: number
-              description: The double value of the start time in seconds of the segment.
-            segmentendabs:
-                type: number
-                description: The double value of the end time in seconds of the segment.
-        scoredsegment:
-          type: object
-          properties:
-            segmentid:
-              type: string
-              description: The unique identifier of the segment.
-            score:
-              type: number
-              description: The similarity score of the segment.
+  schemas:
+    multimediaobject:
+      type: object
+      properties:
+        objectid:
+          type: string
+          description: The unique identifier of the object.
+        mediatype:
+          type: integer
+          description: The mediatype enum value of the object.
+        name:
+          type: string
+          description: The name of the object.
+        path:
+          type: string
+          description: The path of the object.
+    multimediasegment:
+      type: object
+      properties:
+        segmentid:
+          type: string
+          description: The unique identifier of the segment.
+        objectid:
+          type: string
+          description: The unique identifier of the object.
+        segmentnumber:
+          type: integer
+          description: The segment number.
+        segmentstart:
+          type: integer
+          description: The start frame of the segment.
+        segmentend:
+          type: integer
+          description: The end frame of the segment.
+        segmentstartabs:
+          type: number
+          description: The double value of the start time in seconds of the segment.
+        segmentendabs:
+          type: number
+          description: The double value of the end time in seconds of the segment.
+    scoredsegment:
+      type: object
+      properties:
+        segmentid:
+          type: string
+          description: The unique identifier of the segment.
+        score:
+          type: number
+          description: The similarity score of the segment.
+    querybyexample:
+      properties:
+        segmentid:
+          type: string
+          description: The unique identifier of the segment.
+        k:
+          type: integer
+          description: Number of neighbors to retrieve.
+      required:
+        - segmentid
+        - k
+      type: object
+    segmentbytime:
+      properties:
+        objectid:
+          type: string
+          description: The unique identifier of the object.
+        timestamp:
+          type: number
+          description: Timestamp to locate in seconds.
+      required:
+        - objectid
+        - timestamp
+      type: object
 paths:
   /objectinfo/{database}/{objectid}:
     get:
@@ -210,4 +234,57 @@ paths:
               schema:
                 type: array
                 items:
-                    $ref: "#/components/schemas/scoredsegment"
+                  $ref: "#/components/schemas/scoredsegment"
+  /querybyexample/{database}:
+    post:
+      summary: Get the nearest neighbors of a segment.
+      parameters:
+        - description: The name of the database to query.
+          in: path
+          name: database
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/querybyexample'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/scoredsegment'
+                type: array
+  /segmentbytime/{database}:
+    post:
+      summary: Get the segment ID for a given timestamp.
+      parameters:
+        - description: The name of the database to query.
+          in: path
+          name: database
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/segmentbytime'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  segmentid:
+                    type: string
+                    description: Matching segment ID
+
