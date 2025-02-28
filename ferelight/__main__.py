@@ -14,7 +14,7 @@ def main():
                 pythonic_params=True)
     app.app.config.from_file('../config.json', load=json.load)
 
-    app.run(port=8090)
+    app.run(port=8080)
 
 
 if __name__ == '__main__':
