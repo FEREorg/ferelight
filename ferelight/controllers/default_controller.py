@@ -219,8 +219,6 @@ def segmentinfos_post(body):  # noqa: E501
 def querybyexample_database_post(database, body):  # noqa: E501
     """Get the nearest neighbors of a segment.
 
-     # noqa: E501
-
     :param database: The name of the database to query.
     :type database: str
     :param querybyexample:
@@ -233,31 +231,17 @@ def querybyexample_database_post(database, body):  # noqa: E501
         cur.execute('CREATE EXTENSION IF NOT EXISTS vector')
         register_vector(conn)
 
-        # Fetch the feature vector for the given segment ID
-        cur.execute(
-            "SELECT feature FROM features_openclip WHERE id = %s",
-            (body['segmentid'],)
-        )
-        row = cur.fetchone()
-
-        if not row:
-            return [], 404  # Segment not found
-
-        target_vector = row[0]  # Extract stored feature vector
-
-        # Fetch nearest neighbors
         cur.execute(
             """
-            SELECT s.segmentid, s.objectid, s.segmentnumber, 
-                   s.segmentstart, s.segmentend, s.segmentstartabs, s.segmentendabs, 
-                   f.feature <=> %s AS distance
-            FROM cineast_segment AS s
-            JOIN features_openclip AS f ON s.segmentid = f.id
-            WHERE s.segmentid != %s
-            ORDER BY f.feature <=> %s
-            LIMIT %s
+            SELECT 
+                id, 
+                1 - (feature <=> (SELECT feature FROM features_openclip WHERE id = %s LIMIT 1)) AS score
+            FROM features_openclip
+            WHERE id != %s
+            ORDER BY feature <=> (SELECT feature FROM features_openclip WHERE id = %s LIMIT 1)
+            LIMIT %s;
             """,
-            (target_vector, body['segmentid'], target_vector, body.get('k', 10))
+            (body['segmentid'], body['segmentid'], body['segmentid'], body.get('k', 10))
         )
 
         results = cur.fetchall()
@@ -269,7 +253,7 @@ def querybyexample_database_post(database, body):  # noqa: E501
     scored_segments = [
         Scoredsegment(
             segmentid=row[0],
-            score=1 - row[7]
+            score=row[1]
         ) for row in results
     ]
 
