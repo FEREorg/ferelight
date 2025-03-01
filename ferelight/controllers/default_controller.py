@@ -277,20 +277,17 @@ def segmentbytime_database_post(database, body):  # noqa: E501
         cur = conn.cursor()
         cur.execute(
             """
-            SELECT segmentid, segmentstartabs, segmentendabs
-            FROM cineast_segment
-            WHERE objectid = %s
+            SELECT segmentid 
+            FROM cineast_segment 
+            WHERE objectid = %s 
+            AND %s BETWEEN segmentstartabs AND segmentendabs;
             """,
-            (body['objectid'],)
+            (body['objectid'], body['timestamp'])
         )
 
-        results = cur.fetchall()
+        result = cur.fetchone()
 
-    if not results:
-        return {}, 404  # Object not found
-
-    for row in results:
-        if row[1] <= body['timestamp'] < row[2]:
-            return SegmentbytimeDatabasePost200Response(segmentid=row[0])
+    if result:
+        return SegmentbytimeDatabasePost200Response(segmentid=result[0])
 
     return {}, 404  # No matching segment found
