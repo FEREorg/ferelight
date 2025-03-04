@@ -122,7 +122,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/querybyexample'
+              $ref: '#/components/schemas/_querybyexample__database__post_request'
         required: true
       responses:
         "200":
@@ -151,7 +151,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/segmentbytime'
+              $ref: '#/components/schemas/_segmentbytime__database__post_request'
         required: true
       responses:
         "200":
@@ -293,36 +293,6 @@ components:
           type: number
       title: scoredsegment
       type: object
-    querybyexample:
-      properties:
-        segmentid:
-          description: The unique identifier of the segment.
-          title: segmentid
-          type: string
-        k:
-          description: Number of neighbors to retrieve.
-          title: k
-          type: integer
-      required:
-      - k
-      - segmentid
-      title: querybyexample
-      type: object
-    segmentbytime:
-      properties:
-        objectid:
-          description: The unique identifier of the object.
-          title: objectid
-          type: string
-        timestamp:
-          description: Timestamp to locate in seconds.
-          title: timestamp
-          type: number
-      required:
-      - objectid
-      - timestamp
-      title: segmentbytime
-      type: object
     _objectinfos_post_request:
       properties:
         database:
@@ -370,6 +340,32 @@ components:
           title: limit
           type: integer
       title: _query_post_request
+      type: object
+    _querybyexample__database__post_request:
+      properties:
+        segmentid:
+          description: The segment ID to find neighbors for.
+          title: segmentid
+          type: string
+        k:
+          default: 10
+          description: The number of neighbors to return.
+          title: k
+          type: integer
+      title: _querybyexample__database__post_request
+      type: object
+    _segmentbytime__database__post_request:
+      properties:
+        objectid:
+          description: The object ID to find the segment in.
+          title: objectid
+          type: string
+        timestamp:
+          description: The timestamp to match against.
+          format: float
+          title: timestamp
+          type: number
+      title: _segmentbytime__database__post_request
       type: object
     _segmentbytime__database__post_200_response:
       example:

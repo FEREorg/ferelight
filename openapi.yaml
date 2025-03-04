@@ -53,30 +53,6 @@ components:
         score:
           type: number
           description: The similarity score of the segment.
-    querybyexample:
-      properties:
-        segmentid:
-          type: string
-          description: The unique identifier of the segment.
-        k:
-          type: integer
-          description: Number of neighbors to retrieve.
-      required:
-        - segmentid
-        - k
-      type: object
-    segmentbytime:
-      properties:
-        objectid:
-          type: string
-          description: The unique identifier of the object.
-        timestamp:
-          type: number
-          description: Timestamp to locate in seconds.
-      required:
-        - objectid
-        - timestamp
-      type: object
 paths:
   /objectinfo/{database}/{objectid}:
     get:
@@ -203,7 +179,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/multimediasegment"
-# Query endpoint with similarity text and OCR text as input and list of segment ID and similarity score pairs as output
+  # Query endpoint with similarity text and OCR text as input and list of segment ID and similarity score pairs as output
   /query:
     post:
       summary: Query the FERElight engine.
@@ -239,43 +215,59 @@ paths:
     post:
       summary: Get the nearest neighbors of a segment.
       parameters:
-        - description: The name of the database to query.
+        - name: database
           in: path
-          name: database
           required: true
           schema:
             type: string
+          description: The name of the database to query.
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/querybyexample'
-        required: true
+              type: object
+              properties:
+                segmentid:
+                  type: string
+                  description: The segment ID to find neighbors for.
+                k:
+                  type: integer
+                  description: The number of neighbors to return.
+                  default: 10
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
+                type: array
                 items:
                   $ref: '#/components/schemas/scoredsegment'
-                type: array
   /segmentbytime/{database}:
     post:
       summary: Get the segment ID for a given timestamp.
       parameters:
-        - description: The name of the database to query.
+        - name: database
           in: path
-          name: database
           required: true
           schema:
             type: string
+          description: The name of the database to query.
       requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/segmentbytime'
-        required: true
+              type: object
+              properties:
+                objectid:
+                  type: string
+                  description: The object ID to find the segment in.
+                timestamp:
+                  type: number
+                  format: float
+                  description: The timestamp to match against.
       responses:
         "200":
           description: OK

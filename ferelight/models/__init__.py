@@ -4,8 +4,8 @@ from ferelight.models.multimediaobject import Multimediaobject
 from ferelight.models.multimediasegment import Multimediasegment
 from ferelight.models.objectinfos_post_request import ObjectinfosPostRequest
 from ferelight.models.query_post_request import QueryPostRequest
-from ferelight.models.querybyexample import Querybyexample
+from ferelight.models.querybyexample_database_post_request import QuerybyexampleDatabasePostRequest
 from ferelight.models.scoredsegment import Scoredsegment
-from ferelight.models.segmentbytime import Segmentbytime
 from ferelight.models.segmentbytime_database_post200_response import SegmentbytimeDatabasePost200Response
+from ferelight.models.segmentbytime_database_post_request import SegmentbytimeDatabasePostRequest
 from ferelight.models.segmentinfos_post_request import SegmentinfosPostRequest
