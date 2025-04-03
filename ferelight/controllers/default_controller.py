@@ -231,15 +231,22 @@ def querybyexample_database_post(database, body):  # noqa: E501
 
         cur.execute(
             """
+            WITH query_feature AS (
+                SELECT feature 
+                FROM features_openclip 
+                WHERE id = %s 
+                LIMIT 1
+            )
             SELECT 
                 id, 
-                1 - (feature <=> (SELECT feature FROM features_openclip WHERE id = %s LIMIT 1)) AS score
+                (feature <=> (SELECT feature FROM query_feature)) AS distance,
+                1 - (feature <=> (SELECT feature FROM query_feature)) AS score
             FROM features_openclip
             WHERE id != %s
-            ORDER BY feature <=> (SELECT feature FROM features_openclip WHERE id = %s LIMIT 1)
+            ORDER BY distance
             LIMIT %s;
             """,
-            (body['segmentid'], body['segmentid'], body['segmentid'], body.get('k', 10))
+            (body['segmentid'], body['segmentid'], body.get('k', 10))
         )
 
         results = cur.fetchall()
