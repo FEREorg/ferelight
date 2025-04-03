@@ -211,16 +211,9 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/scoredsegment"
-  /querybyexample/{database}:
+  /querybyexample:
     post:
       summary: Get the nearest neighbors of a segment.
-      parameters:
-        - name: database
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The name of the database to query.
       requestBody:
         required: true
         content:
@@ -228,12 +221,15 @@ paths:
             schema:
               type: object
               properties:
+                database:
+                  type: string
+                  description: The name of the database to query.
                 segmentid:
                   type: string
                   description: The segment ID to find neighbors for.
-                k:
+                limit:
                   type: integer
-                  description: The number of neighbors to return.
+                  description: The maximum number of results to return.
                   default: 10
       responses:
         "200":

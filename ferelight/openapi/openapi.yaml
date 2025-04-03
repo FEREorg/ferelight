@@ -106,23 +106,14 @@ paths:
           description: OK
       summary: Query the FERElight engine.
       x-openapi-router-controller: ferelight.controllers.default_controller
-  /querybyexample/{database}:
+  /querybyexample:
     post:
-      operationId: querybyexample_database_post
-      parameters:
-      - description: The name of the database to query.
-        explode: false
-        in: path
-        name: database
-        required: true
-        schema:
-          type: string
-        style: simple
+      operationId: querybyexample_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/_querybyexample__database__post_request'
+              $ref: '#/components/schemas/_querybyexample_post_request'
         required: true
       responses:
         "200":
@@ -341,18 +332,22 @@ components:
           type: integer
       title: _query_post_request
       type: object
-    _querybyexample__database__post_request:
+    _querybyexample_post_request:
       properties:
+        database:
+          description: The name of the database to query.
+          title: database
+          type: string
         segmentid:
           description: The segment ID to find neighbors for.
           title: segmentid
           type: string
-        k:
+        limit:
           default: 10
-          description: The number of neighbors to return.
-          title: k
+          description: The maximum number of results to return.
+          title: limit
           type: integer
-      title: _querybyexample__database__post_request
+      title: _querybyexample_post_request
       type: object
     _segmentbytime__database__post_request:
       properties:

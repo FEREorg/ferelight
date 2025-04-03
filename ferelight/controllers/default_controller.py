@@ -156,8 +156,7 @@ def query_post(body):  # noqa: E501
             )
 
         results = cur.fetchall()
-        scored_segments = [Scoredsegment(segmentid=segmentid, score=1 - distance) for (segmentid, distance) in
-                           results]
+        scored_segments = [Scoredsegment(segmentid=segmentid, score=1 - distance) for (segmentid, distance) in results]
         return scored_segments
 
 
@@ -214,23 +213,29 @@ def segmentinfos_post(body):  # noqa: E501
 
     return segment_infos
 
-def querybyexample_database_post(database, body):  # noqa: E501
+
+def querybyexample_post(body):  # noqa: E501
     """Get the nearest neighbors of a segment.
 
-    :param database: The name of the database to query.
-    :type database: str
-    :param querybyexample_database_post_request:
-    :type querybyexample_database_post_request: dict | bytes
+     # noqa: E501
+
+    :param querybyexample_post_request:
+    :type querybyexample_post_request: dict | bytes
 
     :rtype: Union[List[Scoredsegment], Tuple[List[Scoredsegment], int], Tuple[List[Scoredsegment], int, Dict[str, str]]
     """
-    with get_connection(database) as conn:
+    with get_connection(body['database']) as conn:
         cur = conn.cursor()
         cur.execute('CREATE EXTENSION IF NOT EXISTS vector')
         register_vector(conn)
 
+        limit = f'LIMIT {body["limit"]}' if 'limit' in body else ''
+
+        if 'limit' in body:
+            cur.execute('SET hnsw.ef_search = %s', (body['limit'],))
+
         cur.execute(
-            """
+            f"""
             WITH query_feature AS (
                 SELECT feature 
                 FROM features_openclip 
@@ -239,31 +244,18 @@ def querybyexample_database_post(database, body):  # noqa: E501
             )
             SELECT 
                 id, 
-                (feature <=> (SELECT feature FROM query_feature)) AS distance,
-                1 - (feature <=> (SELECT feature FROM query_feature)) AS score
+                (feature <=> (SELECT feature FROM query_feature)) AS distance
             FROM features_openclip
             WHERE id != %s
             ORDER BY distance
-            LIMIT %s;
+            {limit}
             """,
-            (body['segmentid'], body['segmentid'], body.get('k', 10))
+            (body['segmentid'], body['segmentid'])
         )
 
         results = cur.fetchall()
-
-    if not results:
-        return [], 404  # No neighbors found
-
-    # Convert results into Scoredsegment objects
-    scored_segments = [
-        Scoredsegment(
-            segmentid=row[0],
-            score=row[1]
-        ) for row in results
-    ]
-
+        scored_segments = [Scoredsegment(segmentid=segmentid, score=1 - distance) for (segmentid, distance) in results]
     return scored_segments
-
 
 
 def segmentbytime_database_post(database, body):  # noqa: E501
