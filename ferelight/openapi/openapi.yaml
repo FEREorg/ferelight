@@ -126,32 +126,23 @@ paths:
           description: OK
       summary: Get the nearest neighbors of a segment.
       x-openapi-router-controller: ferelight.controllers.default_controller
-  /segmentbytime/{database}:
+  /segmentbytime:
     post:
-      operationId: segmentbytime_database_post
-      parameters:
-      - description: The name of the database to query.
-        explode: false
-        in: path
-        name: database
-        required: true
-        schema:
-          type: string
-        style: simple
+      operationId: segmentbytime_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/_segmentbytime__database__post_request'
+              $ref: '#/components/schemas/_segmentbytime_post_request'
         required: true
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/_segmentbytime__database__post_200_response'
+                $ref: '#/components/schemas/_segmentbytime_post_200_response'
           description: OK
-      summary: Get the segment ID for a given timestamp.
+      summary: Get the segment ID for a given timestamp and object.
       x-openapi-router-controller: ferelight.controllers.default_controller
   /segmentinfo/{database}/{segmentid}:
     get:
@@ -349,8 +340,12 @@ components:
           type: integer
       title: _querybyexample_post_request
       type: object
-    _segmentbytime__database__post_request:
+    _segmentbytime_post_request:
       properties:
+        database:
+          description: The name of the database to query.
+          title: database
+          type: string
         objectid:
           description: The object ID to find the segment in.
           title: objectid
@@ -360,15 +355,15 @@ components:
           format: float
           title: timestamp
           type: number
-      title: _segmentbytime__database__post_request
+      title: _segmentbytime_post_request
       type: object
-    _segmentbytime__database__post_200_response:
+    _segmentbytime_post_200_response:
       example:
         segmentid: segmentid
       properties:
         segmentid:
-          description: Matching segment ID
+          description: Matching segment ID.
           title: segmentid
           type: string
-      title: _segmentbytime__database__post_200_response
+      title: _segmentbytime_post_200_response
       type: object

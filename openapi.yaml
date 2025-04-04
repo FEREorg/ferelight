@@ -240,16 +240,9 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/scoredsegment'
-  /segmentbytime/{database}:
+  /segmentbytime:
     post:
-      summary: Get the segment ID for a given timestamp.
-      parameters:
-        - name: database
-          in: path
-          required: true
-          schema:
-            type: string
-          description: The name of the database to query.
+      summary: Get the segment ID for a given timestamp and object.
       requestBody:
         required: true
         content:
@@ -257,6 +250,9 @@ paths:
             schema:
               type: object
               properties:
+                database:
+                  type: string
+                  description: The name of the database to query.
                 objectid:
                   type: string
                   description: The object ID to find the segment in.
@@ -274,5 +270,5 @@ paths:
                 properties:
                   segmentid:
                     type: string
-                    description: Matching segment ID
+                    description: Matching segment ID.
 

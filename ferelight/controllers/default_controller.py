@@ -10,7 +10,7 @@ from ferelight.models.multimediasegment import Multimediasegment  # noqa: E501
 from ferelight.models.objectinfos_post_request import ObjectinfosPostRequest  # noqa: E501
 from ferelight.models.query_post_request import QueryPostRequest  # noqa: E501
 from ferelight.models.scoredsegment import Scoredsegment  # noqa: E501
-from ferelight.models.segmentbytime_database_post200_response import SegmentbytimeDatabasePost200Response  # noqa: E501
+from ferelight.models.segmentbytime_post200_response import SegmentbytimePost200Response  # noqa: E501
 from ferelight.models.segmentinfos_post_request import SegmentinfosPostRequest  # noqa: E501
 from ferelight import util
 
@@ -258,19 +258,17 @@ def querybyexample_post(body):  # noqa: E501
     return scored_segments
 
 
-def segmentbytime_database_post(database, body):  # noqa: E501
-    """Get the segment ID for a given timestamp.
+def segmentbytime_post(body):  # noqa: E501
+    """Get the segment ID for a given timestamp and object.
 
      # noqa: E501
 
-    :param database: The name of the database to query.
-    :type database: str
-    :param segmentbytime_database_post_request:
-    :type segmentbytime_database_post_request: dict | bytes
+    :param segmentbytime_post_request:
+    :type segmentbytime_post_request: dict | bytes
 
-    :rtype: Union[SegmentbytimeDatabasePost200Response, Tuple[SegmentbytimeDatabasePost200Response, int], Tuple[SegmentbytimeDatabasePost200Response, int, Dict[str, str]]
+    :rtype: Union[SegmentbytimePost200Response, Tuple[SegmentbytimePost200Response, int], Tuple[SegmentbytimePost200Response, int, Dict[str, str]]
     """
-    with get_connection(database) as conn:
+    with get_connection(body['database']) as conn:
         cur = conn.cursor()
         cur.execute(
             """
@@ -285,6 +283,6 @@ def segmentbytime_database_post(database, body):  # noqa: E501
         result = cur.fetchone()
 
     if result:
-        return SegmentbytimeDatabasePost200Response(segmentid=result[0])
+        return SegmentbytimePost200Response(segmentid=result[0])
 
     return {}, 404  # No matching segment found
