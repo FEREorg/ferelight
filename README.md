@@ -10,7 +10,7 @@ pip install ferelight
 
 ### From Source
 ```
-pip install git+https://github.com/username/ferelight.git
+pip install git+https://github.com/FEREorg/ferelight.git
 ```
 
 ## Usage
