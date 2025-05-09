@@ -1,6 +1,18 @@
 # FERElight | ˈferēlīt |
 Extremely lightweight and purpose-built feature extraction and retrieval engine (FERE).
 
+## Installation
+
+### From PyPI
+```
+pip install ferelight
+```
+
+### From Source
+```
+pip install git+https://github.com/FEREorg/ferelight.git
+```
+
 ## Usage
 To configure the pgvector PostgreSQL connection, create a file `config.json` in the root directory with the following content:
 
@@ -31,3 +43,13 @@ docker build -t ferelight .
 # starting up a container
 docker run -p 8080:8080 ferelight
 ```
+
+## Development
+
+### Releasing New Versions
+
+To release a new version to PyPI:
+
+1. Update the version number in `setup.py`
+2. Create a new GitHub release or tag with a version number (e.g., `v1.0.1`)
+3. The GitHub Actions workflow will automatically build and publish the package to PyPI
