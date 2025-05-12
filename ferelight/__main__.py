@@ -8,7 +8,14 @@ import connexion
 from ferelight import encoder
 
 
-def main(config_path='../config.json'):
+def main():
+    # Parse command-line arguments if called from entry point
+    parser = argparse.ArgumentParser(description='Run the FERElight application')
+    parser.add_argument('--config', '-c', default='../config.json',
+                        help='Path to the configuration file (default: ../config.json)')
+    args = parser.parse_args()
+    config_path = args.config
+
     app = connexion.App(__name__, specification_dir='./openapi/')
     app.app.json_encoder = encoder.JSONEncoder
     app.add_api('openapi.yaml',
@@ -20,9 +27,4 @@ def main(config_path='../config.json'):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Run the FERElight application')
-    parser.add_argument('--config', '-c', default='../config.json',
-                        help='Path to the configuration file (default: ../config.json)')
-    args = parser.parse_args()
-
-    main(config_path=args.config)
+    main()
