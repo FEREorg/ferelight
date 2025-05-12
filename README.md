@@ -32,6 +32,14 @@ pip3 install -r requirements.txt
 python3 -m ferelight
 ```
 
+You can also specify a custom path to the configuration file:
+
+```
+python3 -m ferelight --config /path/to/your/config.json
+# or using the short option
+python3 -m ferelight -c /path/to/your/config.json
+```
+
 ## Running with Docker
 
 To run the server on a Docker container, please execute the following from the root directory:
