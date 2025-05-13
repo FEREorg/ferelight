@@ -7,7 +7,7 @@ name = "ferelight"
 version = "1.0.1"
 description = "FERElight"
 authors = [
-    {name = "FERElight Team", email = ""}
+    {name = "FERElight Team"}
 ]
 readme = "README.md"
 requires-python = ">=3.9"
