@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ferelight"
+version = "1.0.1"
+description = "FERElight"
+authors = [
+    {name = "FERElight Team", email = ""}
+]
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+keywords = ["OpenAPI", "FERElight", "feature extraction", "retrieval engine"]
+dependencies = [
+    "connexion[swagger-ui]<3.0.0",
+    "swagger-ui-bundle>=0.0.2",
+    "python_dateutil>=2.6.0",
+    "setuptools>=21.0.0",
+    "Flask==2.2.5",
+    "psycopg2-binary==2.9.10",
+    "pgvector>=0.3.6",
+    "torch>=2.6.0",
+    "open_clip_torch>=2.29.0",
+    "transformers>=4.47.0"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/FEREorg/ferelight"
+
+[project.scripts]
+ferelight = "ferelight.__main__:main"
+
+[project.optional-dependencies]
+test = [
+    "pytest~=7.1.0",
+    "pytest-cov>=2.8.1",
+    "pytest-randomly>=1.2.3",
+    "Flask-Testing==0.8.1",
+]
+
+[tool.setuptools]
+packages = ["ferelight"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"" = ["openapi/openapi.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "--cov=ferelight"
