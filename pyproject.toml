@@ -50,7 +50,7 @@ packages = ["ferelight"]
 include-package-data = true
 
 [tool.setuptools.package-data]
-"" = ["openapi/openapi.yaml"]
+"ferelight" = ["openapi/openapi.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
