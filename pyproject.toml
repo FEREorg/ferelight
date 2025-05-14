@@ -46,8 +46,11 @@ test = [
 ]
 
 [tool.setuptools]
-packages = ["ferelight"]
+packages = []
 include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["ferelight"]
 
 [tool.setuptools.package-data]
 "ferelight" = ["openapi/openapi.yaml"]
