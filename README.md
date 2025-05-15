@@ -42,7 +42,18 @@ python3 -m ferelight -c /path/to/your/config.json
 
 ## Running with Docker
 
-To run the server on a Docker container, please execute the following from the root directory:
+### Using Docker Hub
+
+The Docker image is available on Docker Hub. You can pull and run it directly:
+
+```bash
+docker pull florianspiess/ferelight:latest
+docker run -p 8080:8080 florianspiess/ferelight:latest
+```
+
+### Building Locally
+
+To build and run the server on a Docker container locally, execute the following from the root directory:
 
 ```bash
 # building the image
@@ -56,8 +67,10 @@ docker run -p 8080:8080 ferelight
 
 ### Releasing New Versions
 
-To release a new version to PyPI:
+To release a new version:
 
 1. Update the version number in `ferelight/__init__.py`
 2. Create a new GitHub release or tag with a version number (e.g., `v1.0.1`)
-3. The GitHub Actions workflow will automatically build and publish the package to PyPI
+3. The GitHub Actions workflows will automatically:
+   - Build and publish the package to PyPI
+   - Build and publish the Docker image to Docker Hub (as both `latest` and version-specific tags)
