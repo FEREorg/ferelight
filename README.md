@@ -1,4 +1,6 @@
 # FERElight | ˈferēlīt |
+[![pypi](https://img.shields.io/pypi/v/ferelight.svg)](https://pypi.org/project/ferelight/)
+
 Extremely lightweight and purpose-built feature extraction and retrieval engine (FERE).
 
 ## Installation
