@@ -232,7 +232,8 @@ def querybyexample_post(body):  # noqa: E501
         limit = f'LIMIT {body["limit"]}' if 'limit' in body else ''
 
         if 'limit' in body:
-            cur.execute('SET hnsw.ef_search = %s', (body['limit'],))
+            # +1 to limit to include the segment itself which limit will remove
+            cur.execute('SET hnsw.ef_search = %s', (body['limit'] + 1,))
 
         cur.execute(
             f"""
