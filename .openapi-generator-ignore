@@ -25,4 +25,7 @@
 README.md
 requirements.txt
 ferelight/__main__.py
+ferelight/__init__.py
 ferelight/controllers/__init__.py
+Dockerfile
+tox.ini

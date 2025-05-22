@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   description: API for the lightweight feature extraction and retrieval engine (FERElight).
   title: FERElight
-  version: 1.0.0
+  version: 1.1.0
 servers:
 - url: /
 paths:
@@ -352,7 +352,6 @@ components:
           type: string
         timestamp:
           description: The timestamp to match against.
-          format: float
           title: timestamp
           type: number
       title: _segmentbytime_post_request

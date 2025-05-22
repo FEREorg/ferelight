@@ -2,7 +2,7 @@ openapi: 3.0.1
 info:
   title: FERElight
   description: API for the lightweight feature extraction and retrieval engine (FERElight).
-  version: 1.0.0
+  version: 1.1.0
 components:
   schemas:
     multimediaobject:
@@ -258,7 +258,6 @@ paths:
                   description: The object ID to find the segment in.
                 timestamp:
                   type: number
-                  format: float
                   description: The timestamp to match against.
       responses:
         "200":

@@ -1,7 +1,6 @@
 .dockerignore
 .travis.yml
 Dockerfile
-ferelight/__init__.py
 ferelight/controllers/default_controller.py
 ferelight/controllers/security_controller.py
 ferelight/encoder.py
@@ -23,4 +22,3 @@ ferelight/util.py
 git_push.sh
 setup.py
 test-requirements.txt
-tox.ini
