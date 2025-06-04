@@ -47,7 +47,8 @@ def main():
     app.app.route('/<path:path>', methods=['OPTIONS'])(handle_options_request)
     app.app.route('/', methods=['OPTIONS'])(handle_options_request)
 
-    app.run(port=8080)
+    port = app.app.config.get('PORT', 8080)
+    app.run(port=port)
 
 
 if __name__ == '__main__':
