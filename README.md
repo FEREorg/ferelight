@@ -16,16 +16,31 @@ pip install git+https://github.com/FEREorg/ferelight.git
 ```
 
 ## Usage
-To configure the pgvector PostgreSQL connection, create a file `config.json` in the root directory with the following content:
+To configure the pgvector PostgreSQL connection and CORS settings, create a file `config.json` in the root directory with the following content:
 
 ```json
 {
   "DBHOST": "<host>",
   "DBPORT": "<port>",
   "DBUSER": "<user>",
-  "DBPASSWORD": "<password>"
+  "DBPASSWORD": "<password>",
+  "CORS": {
+    "ENABLED": true,
+    "ALLOW_ORIGIN": "*",
+    "ALLOW_METHODS": "GET, POST, OPTIONS",
+    "ALLOW_HEADERS": "Content-Type, Authorization"
+  }
 }
 ```
+
+### CORS Configuration Parameters
+
+- `ENABLED`: Boolean value to enable or disable CORS support (default: false)
+- `ALLOW_ORIGIN`: Specifies which origins are allowed to access the resource (default: "*")
+- `ALLOW_METHODS`: Specifies which HTTP methods are allowed (default: "GET, POST, OPTIONS")
+- `ALLOW_HEADERS`: Specifies which HTTP headers are allowed (default: "Content-Type, Authorization")
+
+### Running the Server
 
 To run the server, please execute the following from the root directory:
 
