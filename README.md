@@ -20,6 +20,7 @@ To configure the pgvector PostgreSQL connection and CORS settings, create a file
 
 ```json
 {
+  "PORT": 8080,
   "DBHOST": "<host>",
   "DBPORT": "<port>",
   "DBUSER": "<user>",
@@ -32,6 +33,10 @@ To configure the pgvector PostgreSQL connection and CORS settings, create a file
   }
 }
 ```
+
+### Server Configuration Parameters
+
+- `PORT`: The port on which the server will listen (default: 8080)
 
 ### CORS Configuration Parameters
 
@@ -65,7 +70,10 @@ The Docker image is available on Docker Hub. You can pull and run it directly:
 
 ```bash
 docker pull florianspiess/ferelight:latest
+# Using default port (8080)
 docker run -p 8080:8080 florianspiess/ferelight:latest
+# Or specify a custom port (e.g., 9000) by mapping to the configured port
+docker run -p 9000:8080 florianspiess/ferelight:latest
 ```
 
 ### Building Locally
@@ -77,7 +85,10 @@ To build and run the server on a Docker container locally, execute the following
 docker build -t ferelight .
 
 # starting up a container
+# Using default port (8080)
 docker run -p 8080:8080 ferelight
+# Or specify a custom port (e.g., 9000) by mapping to the configured port
+docker run -p 9000:8080 ferelight
 ```
 
 ## Development
