@@ -4,15 +4,10 @@ from flask import current_app
 from pgvector.psycopg2 import register_vector
 
 from ferelight.controllers import tokenizer, model
-from ferelight.models import Scoredsegment
 from ferelight.models.multimediaobject import Multimediaobject  # noqa: E501
 from ferelight.models.multimediasegment import Multimediasegment  # noqa: E501
-from ferelight.models.objectinfos_post_request import ObjectinfosPostRequest  # noqa: E501
-from ferelight.models.query_post_request import QueryPostRequest  # noqa: E501
 from ferelight.models.scoredsegment import Scoredsegment  # noqa: E501
 from ferelight.models.segmentbytime_post200_response import SegmentbytimePost200Response  # noqa: E501
-from ferelight.models.segmentinfos_post_request import SegmentinfosPostRequest  # noqa: E501
-from ferelight import util
 
 
 def get_connection(database):
@@ -35,7 +30,7 @@ def objectinfo_database_objectid_get(database, objectid):  # noqa: E501
     """
     with get_connection(database) as conn:
         cur = conn.cursor()
-        cur.execute(f"""SELECT objectid, mediatype, name, path FROM cineast_multimediaobject WHERE objectid = %s""",
+        cur.execute(f"""SELECT objectid, mediatype, name, path FROM multimedia_object WHERE objectid = %s""",
                     (objectid,))
         (objectid, mediatype, name, path) = cur.fetchone()
         return Multimediaobject(objectid=objectid, mediatype=mediatype, name=name, path=path)
@@ -54,7 +49,7 @@ def objectinfos_post(body):  # noqa: E501
     with get_connection(body['database']) as conn:
         cur = conn.cursor()
         cur.execute(
-            f"""SELECT objectid, mediatype, name, path FROM cineast_multimediaobject WHERE objectid = ANY(%s)""",
+            f"""SELECT objectid, mediatype, name, path FROM multimedia_object WHERE objectid = ANY(%s)""",
             (body['objectids'],))
         results = cur.fetchall()
 
@@ -81,7 +76,7 @@ def objectsegments_database_objectid_get(database, objectid):  # noqa: E501
         cur.execute(
             f"""
                 SELECT segmentid, objectid, segmentnumber, segmentstart, segmentend, segmentstartabs, segmentendabs  
-                FROM cineast_segment WHERE objectid = %s""",
+                FROM multimedia_segment WHERE objectid = %s""",
             (objectid,))
         results = cur.fetchall()
 
@@ -176,7 +171,7 @@ def segmentinfo_database_segmentid_get(database, segmentid):  # noqa: E501
         cur = conn.cursor()
         cur.execute(f"""
             SELECT segmentid, objectid, segmentnumber, segmentstart, segmentend, segmentstartabs, segmentendabs 
-            FROM cineast_segment WHERE segmentid = %s
+            FROM multimedia_segment WHERE segmentid = %s
         """,
                     (segmentid,))
         (segmentid, objectid, segmentnumber, segmentstart, segmentend, segmentstartabs, segmentendabs) = cur.fetchone()
@@ -200,7 +195,7 @@ def segmentinfos_post(body):  # noqa: E501
         cur.execute(
             f"""
                 SELECT segmentid, objectid, segmentnumber, segmentstart, segmentend, segmentstartabs, segmentendabs  
-                FROM cineast_segment WHERE segmentid = ANY(%s)""",
+                FROM multimedia_segment WHERE segmentid = ANY(%s)""",
             (body['segmentids'],))
         results = cur.fetchall()
 
@@ -274,7 +269,7 @@ def segmentbytime_post(body):  # noqa: E501
         cur.execute(
             """
             SELECT segmentid 
-            FROM cineast_segment 
+            FROM multimedia_segment 
             WHERE objectid = %s 
             AND %s BETWEEN segmentstartabs AND segmentendabs;
             """,
